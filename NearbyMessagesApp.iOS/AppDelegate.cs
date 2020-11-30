@@ -21,10 +21,7 @@ namespace NearbyMessagesApp.iOS
         {
             global::Xamarin.Forms.Forms.Init();
             LoadApplication(new App());
-
-            manager = new MessageManager("");
-            subscription = manager.Subscription(MessageFound, MessageLost);
-
+            setUp();
             return base.FinishedLaunching(app, options);
         }
 
@@ -39,6 +36,26 @@ namespace NearbyMessagesApp.iOS
         void MessageLost(Message message)
         {
             App.Current.MainPage.DisplayAlert(string.Empty, "Unpublished", "okay");
+        }
+
+        private void setUp()
+        {
+            try
+            {
+                if (Permission.Granted)
+                {
+                    manager = new MessageManager("AIzaSyBEOVENhxhTy1aps3gg-okeFwgNJ7edtGg");
+                    subscription = manager.Subscription(MessageFound, MessageLost);
+                }
+                else
+                {
+                    App.Current.MainPage.DisplayAlert(string.Empty, "No Permission", "okay");
+                }
+            }
+            catch (Exception ex)
+            {
+                App.Current.MainPage.DisplayAlert(string.Empty, "Exception", "okay");
+            }
         }
     }
 }
