@@ -22,7 +22,7 @@ namespace NearbyMessagesApp.iOS
             global::Xamarin.Forms.Forms.Init();
             LoadApplication(new App());
 
-            manager = new MessageManager("");
+            manager = new MessageManager("AIzaSyCw5JuQY0z7oAyPlPPN4VJs4BfBSjNac34");
             subscription = manager.Subscription(MessageFound, MessageLost);
 
             return base.FinishedLaunching(app, options);
