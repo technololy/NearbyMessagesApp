@@ -34,7 +34,5 @@
 	<string>NearbyMessagesApp</string>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/AppIcon.appiconset</string>
-	<key>Custom Property</key>
-	<string></string>
 </dict>
 </plist>
