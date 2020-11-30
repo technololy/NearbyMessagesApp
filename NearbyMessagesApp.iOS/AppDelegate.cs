@@ -42,15 +42,15 @@ namespace NearbyMessagesApp.iOS
         {
             try
             {
-                if (Permission.Granted)
-                {
-                    manager = new MessageManager("AIzaSyBEOVENhxhTy1aps3gg-okeFwgNJ7edtGg");
-                    subscription = manager.Subscription(MessageFound, MessageLost);
-                }
-                else
-                {
-                    App.Current.MainPage.DisplayAlert(string.Empty, "No Permission", "okay");
-                }
+                //if (Permission.Granted)
+                //{
+                manager = new MessageManager("AIzaSyBEOVENhxhTy1aps3gg-okeFwgNJ7edtGg");
+                subscription = manager.Subscription(MessageFound, MessageLost);
+                // }
+                //else
+                // {
+                //App.Current.MainPage.DisplayAlert(string.Empty, "No Permission", "okay");
+                // }
             }
             catch (Exception ex)
             {
