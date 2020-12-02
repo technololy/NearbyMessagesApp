@@ -34,5 +34,23 @@
 	<string>NearbyMessagesApp</string>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/AppIcon.appiconset</string>
+	<key>UIRequiresPersistentWiFi</key>
+	<true/>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>I need the bluetooth</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>i need location</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>i need it</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>i need it</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>gggg</string>
+	<key>NFCReaderUsageDescription</key>
+	<string>i need it</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>i need you</string>
+	<key>NSLocationUsageDescription</key>
+	<string>location</string>
 </dict>
 </plist>
