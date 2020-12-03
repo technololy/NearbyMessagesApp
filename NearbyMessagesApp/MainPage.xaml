@@ -20,6 +20,10 @@
                 </FormattedString>
             </Label.FormattedText>
         </Label>
+        <Button
+            Clicked="Button_Clicked"
+            Text="Publish message(Only Android)"
+            VerticalOptions="EndAndExpand" />
     </StackLayout>
 
 </ContentPage>

@@ -14,5 +14,10 @@ namespace NearbyMessagesApp
         {
             InitializeComponent();
         }
+
+        void Button_Clicked(System.Object sender, System.EventArgs e)
+        {
+            MessagingCenter.Send(this, "Publish");
+        }
     }
 }
