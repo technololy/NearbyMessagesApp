@@ -45,7 +45,6 @@ namespace NearbyMessagesApp.Droid
             // Setup our GoogleApiClient connection
             googleApiClient = new GoogleApiClient.Builder(this)
                 .AddApi(NearbyClass.MessagesApi)
-                .EnableAutoManage(this, this)
                 .AddConnectionCallbacks(this)
                 .Build();
 
