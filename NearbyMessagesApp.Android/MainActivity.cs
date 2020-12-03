@@ -11,6 +11,8 @@ using Android.Gms.Nearby.Messages;
 using NearbyMessage = Android.Gms.Nearby.Messages.Message;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using System.Text;
+using Android.Net;
 
 [assembly: MetaData("com.google.android.nearby.messages.API_KEY", Value = "AIzaSyBEOVENhxhTy1aps3gg-okeFwgNJ7edtGg")]
 
@@ -47,6 +49,7 @@ namespace NearbyMessagesApp.Droid
                 .AddApi(NearbyClass.MessagesApi)
                 .AddConnectionCallbacks(this)
                 .Build();
+            googleApiClient.Connect();
 
             emotionsMsgListener = new NearbyMessageListener
             {
@@ -129,7 +132,26 @@ namespace NearbyMessagesApp.Droid
 
         Task<bool> IsConnected()
         {
+
+
+            return Task.FromResult(true);
+            System.Diagnostics.Debug.WriteLine($"entered isconnected ");
+            timer.Start();
             return tcsConnected.Task;
+        }
+        System.Timers.Timer timer = new System.Timers.Timer();
+
+
+
+        bool IsConnectedToNetwork
+        {
+            get
+            {
+                var connManager = (ConnectivityManager)GetSystemService(ConnectivityService);
+                NetworkInfo info = connManager.GetNetworkInfo(ConnectivityType.Wifi);
+
+                return (info != null && info.IsConnectedOrConnecting);
+            }
         }
 
         async Task Subscribe()
@@ -158,31 +180,48 @@ namespace NearbyMessagesApp.Droid
 
         async Task Publish()
         {
-            // Wait for connection
-            if (!await IsConnected())
-                return;
-
-            // Create new Nearby message to publish with the spinner choices
-            dynamic Message = new
+            try
             {
-                message = "hello"
-            };
+                // Wait for connection
+                if (!await IsConnected())
+                    return;
 
-            // Remove any existing messages for this user from our list
-            // Add the new message and update the dataset
+                //if (!IsConnectedToNetwork)
+                //{
+                //    await App.Current.MainPage.DisplayAlert(string.Empty, "Not connected to network", "Okay");
+                //    return;
+                //}
+
+                // Create new Nearby message to publish with the spinner choices
+                dynamic Message = new
+                {
+                    message = "hello"
+                };
+                // var sevenItems = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+                var array = Encoding.ASCII.GetBytes(new string(' ', 100));
 
 
-            // If we already published a message, unpublish it first
-            if (publishedMessage != null)
-                await Unpublish();
+                // Remove any existing messages for this user from our list
+                // Add the new message and update the dataset
 
-            // Create a new nearby message with our serialized object
-            publishedMessage = new NearbyMessage(Message?.Serialize());
 
-            // Publish our new message
-            var status = await NearbyClass.Messages.PublishAsync(googleApiClient, publishedMessage);
-            if (!status.IsSuccess)
-                await App.Current.MainPage.DisplayAlert(string.Empty, status.StatusMessage, "Okay");
+                // If we already published a message, unpublish it first
+                if (publishedMessage != null)
+                    await Unpublish();
+
+                // Create a new nearby message with our serialized object
+                //publishedMessage = new NearbyMessage(Message?.Serialize());
+                publishedMessage = new NearbyMessage(array, "lolade1", "lolade2");
+
+                // Publish our new message
+                var status = await NearbyClass.Messages.PublishAsync(googleApiClient, publishedMessage);
+                if (!status.IsSuccess)
+                    await App.Current.MainPage.DisplayAlert(string.Empty, status.StatusMessage, "Okay");
+            }
+            catch (Exception ex)
+            {
+                await App.Current.MainPage.DisplayAlert(string.Empty, ex.ToString(), "Okay");
+            }
 
         }
 
@@ -208,7 +247,11 @@ namespace NearbyMessagesApp.Droid
             MessagingCenter.Unsubscribe<MainPage>(this, "Publish");
             base.OnStop();
         }
+        protected override void OnStart()
+        {
+            base.OnStart();
 
+        }
         void LogMessage(string format, params object[] args)
         {
             Android.Util.Log.Debug("NEARBY-APP", string.Format(format, args));
