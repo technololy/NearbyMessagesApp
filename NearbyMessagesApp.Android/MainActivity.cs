@@ -14,16 +14,21 @@ using Xamarin.Forms;
 using System.Text;
 using Android.Net;
 
-[assembly: MetaData("com.google.android.nearby.messages.API_KEY", Value = "AIzaSyBEOVENhxhTy1aps3gg-okeFwgNJ7edtGg")]
+[assembly: MetaData("com.google.android.nearby.messages.API_KEY", Value = "AIzaSyDwSWO33q1sQ18kUSNtEaBCAg7ybv4vgEs")]
 
 namespace NearbyMessagesApp.Droid
 {
     [Activity(Label = "NearbyMessagesApp", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity, GoogleApiClient.IOnConnectionFailedListener, GoogleApiClient.IConnectionCallbacks
+    public class MainActivity :
+global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity,
+GoogleApiClient.IOnConnectionFailedListener,
+        GoogleApiClient.IConnectionCallbacks
     {
         GoogleApiClient googleApiClient;
         NearbyMessageListener emotionsMsgListener;
         NearbyMessage publishedMessage;
+        // Android.Support.V4.App.FragmentActivity Fragment;
+        //global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
         TaskCompletionSource<bool> tcsConnected = new TaskCompletionSource<bool>();
 
         public MainActivity()
@@ -36,8 +41,8 @@ namespace NearbyMessagesApp.Droid
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            TabLayoutResource = Resource.Layout.Tabbar;
-            ToolbarResource = Resource.Layout.Toolbar;
+            // TabLayoutResource = Resource.Layout.Tabbar;
+            //ToolbarResource = Resource.Layout.Toolbar;
 
             base.OnCreate(savedInstanceState);
 
@@ -48,8 +53,13 @@ namespace NearbyMessagesApp.Droid
             googleApiClient = new GoogleApiClient.Builder(this)
                 .AddApi(NearbyClass.MessagesApi)
                 .AddConnectionCallbacks(this)
+                //.EnableAutoManage(frg, this)
+                .AddOnConnectionFailedListener(this)
                 .Build();
-            googleApiClient.Connect();
+
+            //googleApiClient.Connect();
+
+
 
             emotionsMsgListener = new NearbyMessageListener
             {
@@ -112,6 +122,8 @@ namespace NearbyMessagesApp.Droid
         public void OnConnectionFailed(Android.Gms.Common.ConnectionResult result)
         {
             // Connection failed to Google Play services, set our result false
+            //await RequestNearbyPermissionsAsync();
+
             tcsConnected.TrySetResult(false);
 
             // There's no way to recover at this point, so let the user know, and exit
@@ -134,7 +146,7 @@ namespace NearbyMessagesApp.Droid
         {
 
 
-            return Task.FromResult(true);
+            //return Task.FromResult(true);
             System.Diagnostics.Debug.WriteLine($"entered isconnected ");
             timer.Start();
             return tcsConnected.Task;
@@ -212,8 +224,12 @@ namespace NearbyMessagesApp.Droid
                 // Create a new nearby message with our serialized object
                 //publishedMessage = new NearbyMessage(Message?.Serialize());
                 publishedMessage = new NearbyMessage(array, "lolade1", "lolade2");
-
+                var getMsg = NearbyClass.GetMessagesClient(this);
                 // Publish our new message
+                if (googleApiClient.IsConnected)
+                {
+                    googleApiClient.Connect();
+                }
                 var status = await NearbyClass.Messages.PublishAsync(googleApiClient, publishedMessage);
                 if (!status.IsSuccess)
                     await App.Current.MainPage.DisplayAlert(string.Empty, status.StatusMessage, "Okay");
@@ -246,10 +262,18 @@ namespace NearbyMessagesApp.Droid
             Unpublish().ContinueWith(t => Unsubscribe());
             MessagingCenter.Unsubscribe<MainPage>(this, "Publish");
             base.OnStop();
+            googleApiClient.Disconnect();
+
         }
         protected override void OnStart()
         {
+            googleApiClient.Connect();
+
             base.OnStart();
+            //googleApiClient.Connect();
+
+
+
 
         }
         void LogMessage(string format, params object[] args)
