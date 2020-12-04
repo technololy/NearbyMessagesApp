@@ -177,6 +177,17 @@ GoogleApiClient.IOnConnectionFailedListener,
             var status = await NearbyClass.Messages.SubscribeAsync(googleApiClient, emotionsMsgListener);
             if (!status.IsSuccess)
                 await App.Current.MainPage.DisplayAlert(string.Empty, status.StatusMessage, "Okay");
+            else
+
+                await App.Current.MainPage.DisplayAlert("Subscribe", status.StatusMessage, "Okay");
+
+
+
+            if (status.IsSuccess)
+            {
+
+                NearbyClass.GetMessagesClient(this).Subscribe(emotionsMsgListener);
+            }
 
         }
 
@@ -189,7 +200,7 @@ GoogleApiClient.IOnConnectionFailedListener,
 
             var status = await NearbyClass.Messages.UnsubscribeAsync(googleApiClient, emotionsMsgListener);
             if (!status.IsSuccess)
-                await App.Current.MainPage.DisplayAlert(string.Empty, status.StatusMessage, "Okay");
+                await App.Current.MainPage.DisplayAlert("Unsuscribe", status.StatusMessage, "Okay");
         }
 
         async Task Publish()
@@ -212,12 +223,13 @@ GoogleApiClient.IOnConnectionFailedListener,
                     message = "hello"
                 };
                 // var sevenItems = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
-                var array = Encoding.ASCII.GetBytes(new string(' ', 100));
+                string myMessage = "This is lolade";
+
+                var array = Encoding.ASCII.GetBytes(myMessage);
 
 
                 // Remove any existing messages for this user from our list
                 // Add the new message and update the dataset
-
 
                 // If we already published a message, unpublish it first
                 if (publishedMessage != null)
@@ -225,24 +237,28 @@ GoogleApiClient.IOnConnectionFailedListener,
 
                 // Create a new nearby message with our serialized object
                 //publishedMessage = new NearbyMessage(Message?.Serialize());
-                publishedMessage = new NearbyMessage(array, "lolade1", "lolade2");
+                publishedMessage = new NearbyMessage(array);
                 var getMsg = NearbyClass.GetMessagesClient(this);
-                // Publish our new message
-                if (!googleApiClient.IsConnected)
-                {
-                    googleApiClient.Connect();
-                }
+
+
+
                 var status = await NearbyClass.Messages.PublishAsync(googleApiClient, publishedMessage);
                 if (!status.IsSuccess)
-                    await App.Current.MainPage.DisplayAlert(string.Empty, status.StatusMessage, "Okay");
+                    await App.Current.MainPage.DisplayAlert("Publish", status.StatusMessage, "Okay");
                 else
 
-                    await App.Current.MainPage.DisplayAlert(string.Empty, status.StatusMessage, "Okay");
+                    await App.Current.MainPage.DisplayAlert("Publish", status.StatusMessage, "Okay");
+
+                if (status.IsSuccess)
+                {
+                    NearbyClass.GetMessagesClient(this).Publish(publishedMessage);
+
+                }
 
             }
             catch (Exception ex)
             {
-                await App.Current.MainPage.DisplayAlert(string.Empty, ex.ToString(), "Okay");
+                await App.Current.MainPage.DisplayAlert("Publish", ex.ToString(), "Okay");
             }
 
         }
