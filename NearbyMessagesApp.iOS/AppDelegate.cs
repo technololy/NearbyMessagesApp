@@ -20,10 +20,14 @@ namespace NearbyMessagesApp.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             global::Xamarin.Forms.Forms.Init();
-            LoadApplication(new App());
             setUp();
+
+            LoadApplication(new App());
             return base.FinishedLaunching(app, options);
         }
+
+
+
 
         // Method to be called when a monkey published his/her message
         void MessageFound(Message message)
@@ -38,13 +42,15 @@ namespace NearbyMessagesApp.iOS
             App.Current.MainPage.DisplayAlert(string.Empty, "Unpublished", "okay");
         }
 
+
+
         private void setUp()
         {
             try
             {
                 //if (Permission.Granted)
                 //{
-                manager = new MessageManager("AIzaSyBEOVENhxhTy1aps3gg-okeFwgNJ7edtGg");
+                manager = new MessageManager("AIzaSyAloOoBi2NFKPeZ03JQZZ--oSh34Nllcsw");
                 subscription = manager.Subscription(MessageFound, MessageLost);
                 // }
                 //else
@@ -54,7 +60,7 @@ namespace NearbyMessagesApp.iOS
             }
             catch (Exception ex)
             {
-                App.Current.MainPage.DisplayAlert(string.Empty, "Exception", "okay");
+                App.Current.MainPage.DisplayAlert(string.Empty, "Exception " + ex.ToString(), "okay");
             }
         }
     }
