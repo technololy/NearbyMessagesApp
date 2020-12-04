@@ -5,6 +5,7 @@ using System.Linq;
 using Foundation;
 using Google.Nearby;
 using UIKit;
+using Xamarin.Forms;
 
 namespace NearbyMessagesApp.iOS
 {
@@ -16,13 +17,33 @@ namespace NearbyMessagesApp.iOS
     {
         MessageManager manager;
         ISubscription subscription;
+        public static IPublication PublishedMessage { get; set; }
 
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             global::Xamarin.Forms.Forms.Init();
-            LoadApplication(new App());
             setUp();
+            LoadApplication(new App());
             return base.FinishedLaunching(app, options);
+        }
+
+
+        private void setUp()
+        {
+            try
+            {
+                manager = new MessageManager("AIzaSyBEOVENhxhTy1aps3gg-okeFwgNJ7edtGg");
+                subscription = manager.Subscription(MessageFound, MessageLost);
+            }
+            catch (Exception ex)
+            {
+                App.Current.MainPage.DisplayAlert(string.Empty, "Exception", "okay");
+            }
+
+            MessagingCenter.Subscribe<MainPage>(this, "Publish", (sender) =>
+            {
+                Publish();
+            });
         }
 
         // Method to be called when a monkey published his/her message
@@ -38,24 +59,16 @@ namespace NearbyMessagesApp.iOS
             App.Current.MainPage.DisplayAlert(string.Empty, "Unpublished", "okay");
         }
 
-        private void setUp()
+        void Publish()
         {
-            try
+            var myMessage = new EmotionMessage
             {
-                //if (Permission.Granted)
-                //{
-                manager = new MessageManager("AIzaSyBEOVENhxhTy1aps3gg-okeFwgNJ7edtGg");
-                subscription = manager.Subscription(MessageFound, MessageLost);
-                // }
-                //else
-                // {
-                //App.Current.MainPage.DisplayAlert(string.Empty, "No Permission", "okay");
-                // }
-            }
-            catch (Exception ex)
-            {
-                App.Current.MainPage.DisplayAlert(string.Empty, "Exception", "okay");
-            }
+                UserId = "Nero",
+                Name = "hi",
+                Species = "",
+                Emotion = ""
+            };
+            AppDelegate.PublishedMessage = manager.Publication(Message.Create(NSData.FromArray(myMessage.Serialize())));
         }
     }
 }

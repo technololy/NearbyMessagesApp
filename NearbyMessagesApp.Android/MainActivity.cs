@@ -64,8 +64,6 @@ GoogleApiClient.IOnConnectionFailedListener,
 
             //googleApiClient.Connect();
 
-
-
             emotionsMsgListener = new NearbyMessageListener
             {
                 OnFoundHandler = msg =>
@@ -91,7 +89,7 @@ GoogleApiClient.IOnConnectionFailedListener,
         async Task RequestNearbyPermissionsAsync()
         {
             // Wait until Google Play Services is connected
-            if (await IsConnected())
+            if (googleApiClient.IsConnected)
             {
 
                 // Request permissions
@@ -152,7 +150,6 @@ GoogleApiClient.IOnConnectionFailedListener,
 
 
             //return Task.FromResult(true);
-            System.Diagnostics.Debug.WriteLine($"entered isconnected ");
             timer.Start();
             return tcsConnected.Task;
         }
@@ -231,7 +228,7 @@ GoogleApiClient.IOnConnectionFailedListener,
                 publishedMessage = new NearbyMessage(array, "lolade1", "lolade2");
                 var getMsg = NearbyClass.GetMessagesClient(this);
                 // Publish our new message
-                if (googleApiClient.IsConnected)
+                if (!googleApiClient.IsConnected)
                 {
                     googleApiClient.Connect();
                 }
@@ -277,7 +274,7 @@ GoogleApiClient.IOnConnectionFailedListener,
         protected override void OnStart()
         {
             googleApiClient.Connect();
-
+            RequestNearbyPermissionsAsync();
             base.OnStart();
             var array = Encoding.ASCII.GetBytes(new string(' ', 100));
 
