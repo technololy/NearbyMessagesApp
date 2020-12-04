@@ -19,5 +19,9 @@ namespace NearbyMessagesApp
         {
             MessagingCenter.Send(this, "Publish");
         }
+        void Buttona_Clicked(System.Object sender, System.EventArgs e)
+        {
+            MessagingCenter.Send(this, "Subscribe");
+        }
     }
 }

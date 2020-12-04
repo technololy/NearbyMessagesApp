@@ -37,6 +37,11 @@ GoogleApiClient.IOnConnectionFailedListener,
             {
                 Publish();
             });
+
+            MessagingCenter.Subscribe<MainPage>(this, "Subscribe", (sender) =>
+            {
+                Subscribe();
+            });
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -233,6 +238,10 @@ GoogleApiClient.IOnConnectionFailedListener,
                 var status = await NearbyClass.Messages.PublishAsync(googleApiClient, publishedMessage);
                 if (!status.IsSuccess)
                     await App.Current.MainPage.DisplayAlert(string.Empty, status.StatusMessage, "Okay");
+                else
+
+                    await App.Current.MainPage.DisplayAlert(string.Empty, status.StatusMessage, "Okay");
+
             }
             catch (Exception ex)
             {
@@ -270,8 +279,12 @@ GoogleApiClient.IOnConnectionFailedListener,
             googleApiClient.Connect();
 
             base.OnStart();
-            //googleApiClient.Connect();
+            var array = Encoding.ASCII.GetBytes(new string(' ', 100));
 
+            publishedMessage = new NearbyMessage(array, "lolade1", "lolade2");
+            //googleApiClient.Connect();
+            NearbyClass.GetMessagesClient(this).Publish(publishedMessage);
+            NearbyClass.GetMessagesClient(this).Subscribe(emotionsMsgListener);
 
 
 
