@@ -22,9 +22,10 @@ namespace NearbyMessagesApp.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             global::Xamarin.Forms.Forms.Init();
-            setUp();
+            
             LoadApplication(new App());
-            return base.FinishedLaunching(app, options);
+            setUp();
+            return base.FinishedLaunching(app, options); 
         }
 
 
